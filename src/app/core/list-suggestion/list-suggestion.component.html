@@ -1,0 +1,47 @@
+<div class="suggestion-container">
+  <h2>Liste des suggestions</h2>
+
+  <!-- Barre de recherche -->
+  <input
+    type="text"
+    class="search-bar"
+    placeholder="Rechercher par titre ou catégorie..."
+    [(ngModel)]="searchTerm"
+  />
+
+  <!-- Liste des suggestions -->
+  <div *ngIf="filteredSuggestions.length > 0; else noResult">
+    <div *ngFor="let suggestion of filteredSuggestions" class="suggestion-card">
+      <h3>{{ suggestion.title }}</h3>
+      <p class="description">{{ suggestion.description }}</p>
+      <div class="details">
+        <span><strong>Catégorie :</strong> {{ suggestion.category }}</span>
+        <span><strong>Date :</strong> {{ suggestion.date | date:'dd/MM/yyyy' }}</span>
+        <span><strong>Statut :</strong> 
+          <span class="status" [ngClass]="{
+            'status-acceptee': suggestion.status === 'acceptee',
+            'status-refusee': suggestion.status === 'refusee',
+            'status-en-attente': suggestion.status === 'en_attente'
+          }">{{ suggestion.status }}</span>
+        </span>
+      </div>
+
+      <!-- Boutons (cachés si refusée) -->
+      <div *ngIf="suggestion.status !== 'refusee'" class="actions">
+        <button class="btn-like" (click)="like(suggestion)">
+          👍 {{ suggestion.nbLikes }}
+        </button>
+        <button 
+          class="btn-fav" 
+          [class.favorite-active]="isFavorite(suggestion)" 
+          (click)="addToFavorites(suggestion)">
+          ❤️
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noResult>
+    <p class="no-result">Aucune suggestion trouvée.</p>
+  </ng-template>
+</div>
