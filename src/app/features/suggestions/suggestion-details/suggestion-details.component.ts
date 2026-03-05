@@ -1,13 +1,16 @@
 import { Component } from '@angular/core';
-import { Suggestion } from '../../models/suggestion';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Suggestion } from '../../../models/suggestion';
 
 @Component({
-  selector: 'app-list-suggestion',
-  templateUrl: './list-suggestion.component.html',
-  styleUrls: ['./list-suggestion.component.css']
+  selector: 'app-suggestion-details',
+  templateUrl: './suggestion-details.component.html',
+  styleUrl: './suggestion-details.component.css'
 })
-export class ListSuggestionComponent {
-  suggestions: Suggestion[] = [
+export class SuggestionDetailsComponent {
+  suggestion: Suggestion | undefined;
+
+   suggestions: Suggestion[] = [
     {
       id: 1,
       title: 'Organiser une journée team building',
@@ -46,34 +49,19 @@ export class ListSuggestionComponent {
     }
   ];
 
-  searchTerm: string = '';
-  favorites: Suggestion[] = [];
 
-  get filteredSuggestions(): Suggestion[] {
-    if (!this.searchTerm.trim()) {
-      return this.suggestions;
-    }
-    const term = this.searchTerm.toLowerCase().trim();
-    return this.suggestions.filter(suggestion =>
-      suggestion.title.toLowerCase().includes(term) ||
-      suggestion.category.toLowerCase().includes(term)
-    );
+  constructor(private route: ActivatedRoute,private router: Router,) {
+
+     const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.suggestion = this.getSuggestionById(id);
+   }
+
+    getSuggestionById(id: number): Suggestion | undefined {
+    return this.suggestions.find(s => s.id === id);
   }
 
-  like(suggestion: Suggestion): void {
-    suggestion.nbLikes++;
+  goBack(): void {
+    this.router.navigate(['/suggestions']); // ou simplement utiliser un lien dans le template
   }
 
-  addToFavorites(suggestion: Suggestion): void {
-    const index = this.favorites.findIndex(fav => fav.id === suggestion.id);
-    if (index === -1) {
-      this.favorites.push(suggestion);
-    } else {
-      this.favorites.splice(index, 1);
-    }
-  }
-
-  isFavorite(suggestion: Suggestion): boolean {
-    return this.favorites.some(fav => fav.id === suggestion.id);
-  }
 }

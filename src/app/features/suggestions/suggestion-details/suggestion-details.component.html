@@ -1,0 +1,19 @@
+<div *ngIf="suggestion; else notFound">
+  <h2>Détails de la suggestion</h2>
+  <p><strong>Titre :</strong> {{ suggestion.title }}</p>
+  <p><strong>Description :</strong> {{ suggestion.description }}</p>
+  <p><strong>Catégorie :</strong> {{ suggestion.category }}</p>
+  <p><strong>Date :</strong> {{ suggestion.date | date:'dd/MM/yyyy' }}</p>
+  <p><strong>Statut :</strong> {{ suggestion.status }}</p>
+  <p><strong>Nombre de likes :</strong> {{ suggestion.nbLikes }}</p>
+
+  <!-- Lien de retour -->
+  <button (click)="goBack()">← Retour à la liste</button>
+  <!-- ou avec un lien simple -->
+  <!-- <a routerLink="/Suggestions">← Retour à la liste</a> -->
+</div>
+
+<ng-template #notFound>
+  <p>Suggestion introuvable.</p>
+  <a routerLink="/suggestions">Retour à la liste</a>
+</ng-template>
