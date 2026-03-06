@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'; // ← ajout OnInit
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Suggestion } from '../../../models/suggestion';
 import { SuggestionService } from '../../../core/Services/suggestion.service';
@@ -6,23 +6,29 @@ import { SuggestionService } from '../../../core/Services/suggestion.service';
 @Component({
   selector: 'app-suggestion-details',
   templateUrl: './suggestion-details.component.html',
-  styleUrl: './suggestion-details.component.css'
+  styleUrls: ['./suggestion-details.component.css']
 })
-export class SuggestionDetailsComponent implements OnInit { // ← implémente OnInit
+export class SuggestionDetailsComponent implements OnInit {
   suggestion: Suggestion | undefined;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private suggestionService: SuggestionService // ← injection
+    private suggestionService: SuggestionService
   ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.suggestion = this.suggestionService.getSuggestionById(id); // ← appel au service
+    this.suggestionService.getSuggestionById(id).subscribe(data => {
+      this.suggestion = data;
+    });
   }
 
   goBack(): void {
-    this.router.navigate(['/suggestions']); // redirection vers la liste
+    this.router.navigate(['/suggestions/suggestions']);
+  }
+
+  updateSuggestion(): void {
+    this.router.navigate(['/suggestions/suggestionform', this.suggestion?.id]);
   }
 }

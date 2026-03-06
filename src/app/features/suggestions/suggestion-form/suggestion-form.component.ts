@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { SuggestionService } from '../../../core/Services/suggestion.service'; // ← import
+import { ActivatedRoute, Router } from '@angular/router';
+import { SuggestionService } from '../../../core/Services/suggestion.service';
+import { Suggestion } from '../../../models/suggestion';
+
 @Component({
   selector: 'app-suggestion-form',
   templateUrl: './suggestion-form.component.html',
@@ -21,24 +23,32 @@ export class SuggestionFormComponent implements OnInit {
     'Accessibilité',
     'Autre'
   ];
+  isEditMode = false;
+  suggestionId?: number;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private suggestionService: SuggestionService // ← injection
+    private route: ActivatedRoute,
+    private suggestionService: SuggestionService
   ) {}
 
   ngOnInit(): void {
+    this.initForm();
+
+    this.route.params.subscribe(params => {
+      if (params['id']) {
+        this.isEditMode = true;
+        this.suggestionId = +params['id'];
+        this.loadSuggestion(this.suggestionId);
+      }
+    });
+  }
+
+  initForm(): void {
     this.suggestionForm = this.fb.group({
-      title: ['', [
-        Validators.required,
-        Validators.minLength(5),
-        Validators.pattern('^[A-Z][a-zA-Z]*$')
-      ]],
-      description: ['', [
-        Validators.required,
-        Validators.minLength(30)
-      ]],
+      title: ['', [Validators.required, Validators.minLength(5), Validators.pattern('^[A-Z][a-zA-Z]*$')]],
+      description: ['', [Validators.required, Validators.minLength(30)]],
       category: ['', Validators.required],
       date: [{ value: this.getTodayDate(), disabled: true }],
       status: [{ value: 'en attente', disabled: true }]
@@ -53,23 +63,50 @@ export class SuggestionFormComponent implements OnInit {
     return `${day}/${month}/${year}`;
   }
 
+  loadSuggestion(id: number): void {
+    this.suggestionService.getSuggestionById(id).subscribe(suggestion => {
+      this.suggestionForm.patchValue({
+        title: suggestion.title,
+        description: suggestion.description,
+        category: suggestion.category
+      });
+    });
+  }
+
   onSubmit(): void {
     if (this.suggestionForm.valid) {
-      const formValue = this.suggestionForm.getRawValue(); // récupère aussi les champs désactivés
-      const newSuggestion = {
+      const formValue = this.suggestionForm.getRawValue();
+      const suggestionData = {
         title: formValue.title,
         description: formValue.description,
         category: formValue.category,
-        date: new Date(),               // date système réelle
-        status: 'en_attente',            // correspond au format attendu
+        date: new Date(),
+        status: 'en_attente',
         nbLikes: 0
       };
-      this.suggestionService.addSuggestion(newSuggestion); // ← appel au service
-      this.router.navigate(['/suggestions/suggestions']); // redirection vers la liste
+
+      if (this.isEditMode && this.suggestionId) {
+        // Mode modification : on récupère l'existant et on met à jour
+        this.suggestionService.getSuggestionById(this.suggestionId).subscribe(existing => {
+          const updated: Suggestion = {
+            ...existing,
+            title: suggestionData.title,
+            description: suggestionData.description,
+            category: suggestionData.category
+          };
+          this.suggestionService.updateSuggestion(this.suggestionId!, updated).subscribe(() => {
+            this.router.navigate(['/suggestions/suggestions']);
+          });
+        });
+      } else {
+        // Mode ajout
+        this.suggestionService.addSuggestion(suggestionData).subscribe(() => {
+          this.router.navigate(['/suggestions/suggestions']);
+        });
+      }
     }
   }
 
-  // Getters pour le template
   get title() { return this.suggestionForm.get('title'); }
   get description() { return this.suggestionForm.get('description'); }
   get category() { return this.suggestionForm.get('category'); }

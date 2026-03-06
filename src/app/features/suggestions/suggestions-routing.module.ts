@@ -13,10 +13,11 @@ const routes: Routes = [
       {redirectTo: 'suggestions', pathMatch: 'full', path: ''}, // redirection vers la liste
       { path: 'suggestions', component: ListSuggestionComponent }, // liste des suggestions
       { path: 'suggestions/:id', component: SuggestionDetailsComponent }, // détail d'une suggestion
-      { path: 'suggestionform', component: SuggestionFormComponent } // détail d'une suggestion
+      { path: 'suggestionform', component: SuggestionFormComponent }, // détail d'une suggestion
+      { path: 'suggestionform/:id', component: SuggestionFormComponent }
     ]
   }
-
+  
 ];
 
 @NgModule({
