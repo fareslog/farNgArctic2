@@ -1,16 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Suggestion } from '../../../models/suggestion';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-
+import { SuggestionService } from '../../../core/Services/suggestion.service'; // ← import
 @Component({
   selector: 'app-suggestion-form',
   templateUrl: './suggestion-form.component.html',
-  styleUrl: './suggestion-form.component.css'
+  styleUrls: ['./suggestion-form.component.css']
 })
 export class SuggestionFormComponent implements OnInit {
-
-   suggestionForm!: FormGroup;
+  suggestionForm!: FormGroup;
   categories: string[] = [
     'Infrastructure et bâtiments',
     'Technologie et services numériques',
@@ -24,61 +22,13 @@ export class SuggestionFormComponent implements OnInit {
     'Autre'
   ];
 
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private suggestionService: SuggestionService // ← injection
+  ) {}
 
-private suggestions: Suggestion[] = [
-    {
-      id: 1,
-      title: 'Organiser une journée team building',
-      description: 'Suggestion pour organiser une journée de team building pour renforcer les liens entre les membres de l\'équipe.',
-      category: 'Événements',
-      date: new Date('2025-01-20'),
-      status: 'acceptee',
-      nbLikes: 10
-    },
-    {
-      id: 2,
-      title: 'Améliorer le système de réservation',
-      description: 'Proposition pour améliorer la gestion des réservations en ligne avec un système de confirmation automatique.',
-      category: 'Technologie',
-      date: new Date('2025-01-15'),
-      status: 'refusee',
-      nbLikes: 0
-    },
-    {
-      id: 3,
-      title: 'Créer un système de récompenses',
-      description: 'Mise en place d\'un programme de récompenses pour motiver les employés et reconnaître leurs efforts.',
-      category: 'Ressources Humaines',
-      date: new Date('2025-01-25'),
-      status: 'refusee',
-      nbLikes: 0
-    },
-    {
-      id: 4,
-      title: 'Moderniser l\'interface utilisateur',
-      description: 'Refonte complète de l\'interface utilisateur pour une meilleure expérience utilisateur.',
-      category: 'Technologie',
-      date: new Date('2025-01-30'),
-      status: 'en_attente',
-      nbLikes: 0
-    }
-  ];
-
-
-   addSuggestion(suggestion: Omit<Suggestion, 'id'>): void {
-    const newId = this.suggestions.length > 0 ? Math.max(...this.suggestions.map(s => s.id)) + 1 : 1;
-    const newSuggestion: Suggestion = {
-      id: newId,
-      ...suggestion
-    };
-    this.suggestions.push(newSuggestion);
-  }
-
-  constructor( private fb: FormBuilder,
-    private router: Router,) {}
-
-    ngOnInit(): void {
-      console.log('Initializing SuggestionFormComponent');
+  ngOnInit(): void {
     this.suggestionForm = this.fb.group({
       title: ['', [
         Validators.required,
@@ -105,22 +55,22 @@ private suggestions: Suggestion[] = [
 
   onSubmit(): void {
     if (this.suggestionForm.valid) {
-      // Récupérer les valeurs (y compris les champs désactivés)
-      const formValue = this.suggestionForm.getRawValue();
+      const formValue = this.suggestionForm.getRawValue(); // récupère aussi les champs désactivés
       const newSuggestion = {
         title: formValue.title,
         description: formValue.description,
         category: formValue.category,
-        date: new Date(), // date système réelle
-        status: 'en_attente', // correspond au format attendu (sans espace)
+        date: new Date(),               // date système réelle
+        status: 'en_attente',            // correspond au format attendu
         nbLikes: 0
       };
-      this.addSuggestion(newSuggestion);
+      this.suggestionService.addSuggestion(newSuggestion); // ← appel au service
       this.router.navigate(['/suggestions/suggestions']); // redirection vers la liste
     }
   }
 
-   get title() { return this.suggestionForm.get('title'); }
+  // Getters pour le template
+  get title() { return this.suggestionForm.get('title'); }
   get description() { return this.suggestionForm.get('description'); }
   get category() { return this.suggestionForm.get('category'); }
 }
