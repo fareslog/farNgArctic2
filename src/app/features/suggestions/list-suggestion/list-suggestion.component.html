@@ -32,6 +32,9 @@
          <button class="btn-details" [routerLink]="['/suggestions/suggestions', suggestion.id]">
             Détails
           </button>
+         <button class="btn-details" routerLink="/suggestions/suggestionform">
+            Ajouter suggestion
+          </button>
 
         <button class="btn-like" (click)="like(suggestion)">
           👍 {{ suggestion.nbLikes }}
