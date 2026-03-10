@@ -66,9 +66,9 @@ export class SuggestionFormComponent implements OnInit {
   loadSuggestion(id: number): void {
     this.suggestionService.getSuggestionById(id).subscribe(suggestion => {
       this.suggestionForm.patchValue({
-        title: suggestion.title,
-        description: suggestion.description,
-        category: suggestion.category
+        title: suggestion.suggestion.title,
+        description: suggestion.suggestion.description,
+        category: suggestion.suggestion.category
       });
     });
   }

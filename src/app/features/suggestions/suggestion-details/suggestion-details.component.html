@@ -7,15 +7,11 @@
   <p><strong>Statut :</strong> {{ suggestion.status }}</p>
   <p><strong>Nombre de likes :</strong> {{ suggestion.nbLikes }}</p>
 
-  <!-- Lien de retour -->
   <button (click)="goBack()">← Retour à la liste</button>
-  <button (click)="updateSuggestion()" style="margin-left: 10px;">✏️ Modifier</button>
-
-  <!-- ou avec un lien simple -->
-  <!-- <a routerLink="/Suggestions">← Retour à la liste</a> -->
+  <button (click)="updateSuggestion(suggestion.id)" style="margin-left: 10px;">✏️ Modifier</button>
 </div>
 
 <ng-template #notFound>
   <p>Suggestion introuvable.</p>
-  <a routerLink="/suggestions">Retour à la liste</a>
+  <a routerLink="/suggestions/suggestions">Retour à la liste</a>
 </ng-template>

@@ -1,5 +1,7 @@
 <div class="suggestion-container">
   <h2>Liste des suggestions</h2>
+  
+  <button class="btn-details" routerLink="/suggestions/suggestionform">Ajouter</button>
 
   <input type="text" class="search-bar" placeholder="Rechercher..." [(ngModel)]="searchTerm" />
 
@@ -21,7 +23,6 @@
 
       <div *ngIf="suggestion.status !== 'refusee'" class="actions">
         <button class="btn-details" [routerLink]="['/suggestions/suggestions', suggestion.id]">Détails</button>
-        <button class="btn-details" routerLink="/suggestions/suggestionform">Ajouter</button>
         <button class="btn-like" (click)="like(suggestion)">👍 {{ suggestion.nbLikes }}</button>
         <button class="btn-fav" [class.favorite-active]="isFavorite(suggestion)" (click)="addToFavorites(suggestion)">❤️</button>
         <button class="btn-delete" (click)="deleteSuggestion(suggestion.id)">🗑️ Supprimer</button>

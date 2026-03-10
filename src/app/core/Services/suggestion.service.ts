@@ -18,8 +18,8 @@ export class SuggestionService {
   }
 
   // Récupérer une suggestion par son id
-  getSuggestionById(id: number): Observable<Suggestion> {
-    return this.http.get<Suggestion>(`${this.suggestionUrl}/${id}`);
+  getSuggestionById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.suggestionUrl}/${id}`);
   }
 
   // Ajouter une suggestion
@@ -28,8 +28,8 @@ export class SuggestionService {
   }
 
   // Modifier une suggestion
-  updateSuggestion(id: number, suggestion: Suggestion): Observable<Suggestion> {
-    return this.http.put<Suggestion>(`${this.suggestionUrl}/${id}`, suggestion);
+  updateSuggestion(id: number, suggestion: Suggestion): Observable<any> {
+    return this.http.put<any>(`${this.suggestionUrl}/${id}`, suggestion);
   }
 
   // Supprimer une suggestion

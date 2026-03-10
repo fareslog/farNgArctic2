@@ -17,18 +17,32 @@ export class SuggestionDetailsComponent implements OnInit {
     private suggestionService: SuggestionService
   ) {}
 
+  // ngOnInit(): void {
+  //   const id = Number(this.route.snapshot.paramMap.get('id'));
+  //   this.suggestionService.getSuggestionById(id).subscribe({
+  //     next: data => this.suggestion = data,
+  //     error: err => console.error('Erreur chargement détail', err)
+  //   });
+  // }
+
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.suggestionService.getSuggestionById(id).subscribe(data => {
-      this.suggestion = data;
-    });
-  }
+  const id = Number(this.route.snapshot.paramMap.get('id'));
+  this.suggestionService.getSuggestionById(id).subscribe({
+    next: data => {
+      console.log('Données reçues:', data);
+      // Extract the nested suggestion object
+      this.suggestion = data.suggestion; // assuming the response has { success: true, suggestion: {...} }
+    },
+    error: err => console.error('Erreur chargement détail', err)
+  });
+}
 
   goBack(): void {
     this.router.navigate(['/suggestions/suggestions']);
   }
 
-  updateSuggestion(): void {
-    this.router.navigate(['/suggestions/suggestionform', this.suggestion?.id]);
+  // ✅ La méthode accepte maintenant un paramètre id
+  updateSuggestion(id: number): void {
+    this.router.navigate(['/suggestions/suggestionform', id]);
   }
 }
